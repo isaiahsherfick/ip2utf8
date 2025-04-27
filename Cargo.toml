@@ -1,0 +1,16 @@
+[package]
+name = "ip2utf8"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "ip2utf8"
+path = "src/lib.rs"
+
+[[bin]]
+name = "utf8toipv4"
+path = "src/utf8_to_ipv4.rs"
+
+[[bin]]
+name = "ipv4toutf8"
+path = "src/ip_to_utf8.rs"
