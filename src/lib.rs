@@ -66,11 +66,48 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
     true
 }
 
-pub fn ipv4_to_utf8(input: &str) -> Result<String, Error> {
-    if !is_valid_ipv4_address(input) {
-        return Err(Error::InvalidIpv4Address(input.into()));
+// TODO figure out how to get this to print ALL possible UTF-8 strings s such that
+// utf8_to_ipv4(s) == ipv4_addr
+// ---------------------------
+// cases I've thought of so far:
+//              -------------------------------
+//              | ipv4_addr = {a}.{b}.{c}.{d} |
+//              -------------------------------
+// -- case 1: each octet is its own 1-byte UTF-8 grapheme
+//
+// -- case 2: a is its own 1-byte UTF-8 grapheme, bcd is the code point of a 3
+// byte grapheme
+//
+// -- case 3: abc is the code point of a 3 byte grapheme, d is the code point of
+// a 1 byte UTF-8 grapheme
+//
+// -- case 3: abc is the code point of a 3 byte grapheme, d is the first byte of
+// the code point of a 2 byte UTF-8 grapheme
+//
+// -- case 4: abc is the code point of a 3 byte grapheme, d is the first byte of
+// the code point of a 3 byte UTF-8 grapheme
+//
+// -- case 5: ab is the code point of a 2 byte grapheme, c and d are each a 1
+// byte grapheme.
+//
+// -- case 6: ab is the code point of a 2 byte grapheme, cd is the code point of
+// a 2 byte grapheme.
+//
+// -- case 7: ab is the code point of a 2 byte grapheme, cd is the first two
+// bytes of the code point of a 3 byte grapheme.
+//
+// -- case 8: a and b are each 1 point graphemes, cd is the code point of a 2
+// byte grapheme.
+//
+// -- case 9: a and b are each 1 point graphemes, cd is the first two bytes of
+// the code point of a 3 byte grapheme.
+
+
+pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
+    if !is_valid_ipv4_address(ipv4_addr) {
+        return Err(Error::InvalidIpv4Address(ipv4_addr.into()));
     }
-    let octets: Vec<&str> = input.split(".").collect();
+    let octets: Vec<&str> = ipv4_addr.split(".").collect();
     let mut solution = String::new();
     for octet in octets {
         let val = octet.parse::<u32>().unwrap();
