@@ -1,5 +1,5 @@
 #+title: Readme
-* ip2utf8
+* utf8toipv4
 ip addresses as UTF-8 encoded strings and vice versa
 
 this crate has both a library and two binary packages. The library package exposes
@@ -9,7 +9,7 @@ string into its associated Unicode code point as a base 10 u64 and storing the
 non-zero bytes in an array. The first four non-zero bytes from that array are
 then converted to an ipv4 address. The inverse operation is also possible.
 
-** ip2utf8 (library)
+** utf8toipv4 (library)
 the library exposes the following functions:
 
 #+BEGIN_SRC rust

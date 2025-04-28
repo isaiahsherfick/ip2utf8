@@ -1,4 +1,4 @@
-use ip2utf8::utf8_to_ipv4;
+use utf8toipv4::utf8_to_ipv4;
 use std::io::{self,Write};
 fn main() {
     let args: Vec<String> = std::env::args().collect();

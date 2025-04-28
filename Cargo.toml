@@ -1,10 +1,10 @@
 [package]
-name = "ip2utf8"
+name = "utf8toipv4"
 version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "ip2utf8"
+name = "utf8toipv4"
 path = "src/lib.rs"
 
 [[bin]]

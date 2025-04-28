@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "ip2utf8"
+name = "utf8toipv4"
 version = "0.1.0"
