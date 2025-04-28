@@ -20,9 +20,13 @@ ipv4_to_utf8(&str) -> String,
 
 
 ** utf8toipv4 (binary package)
-the binary package is called 'utf8toipv4' and simply calls the utf8_to_ipv4
+the binary package is called 'utf8toipv4' and simply calls the
+#+BEGIN_SRC rust
+utf8_to_ipv4
+#+END_SRC
 function on whatever string is supplied as a command line argument. This can be
 piped into xargs and used as an argument to whatever networking tool you want.
+
 #+BEGIN_SRC bash
 utf8toipv4 Isaiah | xargs ping
 PING 73.115.97.105 (73.115.97.105) 56(84) bytes of data.
@@ -36,7 +40,6 @@ PING 73.115.97.105 (73.115.97.105) 56(84) bytes of data.
 --- 73.115.97.105 ping statistics ---
 6 packets transmitted, 6 received, 0% packet loss, time 5007ms
 #+END_SRC
-
 
 #+BEGIN_SRC bash
 utf8toipv4 🍌😂 | xargs ping

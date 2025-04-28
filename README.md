@@ -1,3 +1,5 @@
+<a id="org048c52b"></a>
+
 # ip2utf8
 
 ip addresses as UTF-8 encoded strings and vice versa
@@ -10,7 +12,7 @@ non-zero bytes in an array. The first four non-zero bytes from that array are
 then converted to an ipv4 address. The inverse operation is also possible.
 
 
-<a id="org71cb5c1"></a>
+<a id="org253a01b"></a>
 
 ## ip2utf8 (library)
 
@@ -21,11 +23,14 @@ the library exposes the following functions:
     ipv4_to_utf8(&str) -> String,
 
 
-<a id="org5125318"></a>
+<a id="org351222a"></a>
 
 ## utf8toipv4 (binary package)
 
-the binary package is called &rsquo;utf8toipv4&rsquo; and simply calls the utf8<sub>to</sub><sub>ipv4</sub>
+the binary package is called &rsquo;utf8toipv4&rsquo; and simply calls the
+
+    utf8_to_ipv4
+
 function on whatever string is supplied as a command line argument. This can be
 piped into xargs and used as an argument to whatever networking tool you want.
 
@@ -51,7 +56,7 @@ piped into xargs and used as an argument to whatever networking tool you want.
     3 packets transmitted, 3 received, 0% packet loss, time 2001ms
 
 
-<a id="orgdeebc8a"></a>
+<a id="orgffb6284"></a>
 
 ## TODO ipv4toutf8 (binary package)
 
