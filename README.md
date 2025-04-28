@@ -1,14 +1,14 @@
 
 # Table of Contents
 
-1.  [ip2utf8](#org4e64326)
-    1.  [ip2utf8 (library)](#org5040dbe)
-    2.  [utf8toipv4 (binary package)](#orgbab5f05)
-    3.  [ipv4toutf8 (binary package)](#org56a99f7)
+1.  [ip2utf8](#orge74a267)
+    1.  [ip2utf8 (library)](#org71cb5c1)
+    2.  [utf8toipv4 (binary package)](#org5125318)
+    3.  [ipv4toutf8 (binary package)](#orgdeebc8a)
 
 
 
-<a id="org4e64326"></a>
+<a id="orge74a267"></a>
 
 # ip2utf8
 
@@ -22,18 +22,18 @@ non-zero bytes in an array. The first four non-zero bytes from that array are
 then converted to an ipv4 address. The inverse operation is also possible.
 
 
-<a id="org5040dbe"></a>
+<a id="org71cb5c1"></a>
 
 ## ip2utf8 (library)
 
 the library exposes the following functions:
 
--   utf8<sub>to</sub><sub>ipv4</sub>(&str) -> String,
+    utf8_to_ipv4(&str) -> String,
+    
+    ipv4_to_utf8(&str) -> String,
 
--   ipv4<sub>to</sub><sub>utf8</sub>(&str) -> String,
 
-
-<a id="orgbab5f05"></a>
+<a id="org5125318"></a>
 
 ## utf8toipv4 (binary package)
 
@@ -41,7 +41,7 @@ the binary package is called &rsquo;utf8toipv4&rsquo; and simply calls the utf8<
 function on whatever string is supplied as a command line argument. This can be
 piped into xargs and used as an argument to whatever networking tool you want.
 
-    utf8toipv4 Isaiah
+    utf8toipv4 Isaiah | xargs ping
     PING 73.115.97.105 (73.115.97.105) 56(84) bytes of data.
     64 bytes from 73.115.97.105: icmp_seq=1 ttl=42 time=83.6 ms
     64 bytes from 73.115.97.105: icmp_seq=2 ttl=42 time=82.1 ms
@@ -53,7 +53,7 @@ piped into xargs and used as an argument to whatever networking tool you want.
     --- 73.115.97.105 ping statistics ---
     6 packets transmitted, 6 received, 0% packet loss, time 5007ms
 
-    utf8toipv4 🍌😂
+    utf8toipv4 🍌😂 | xargs ping
     PING 76.243.1.2 (76.243.1.2) 56(84) bytes of data.
     64 bytes from 76.243.1.2: icmp_seq=1 ttl=53 time=172 ms
     64 bytes from 76.243.1.2: icmp_seq=2 ttl=53 time=66.5 ms
@@ -63,7 +63,7 @@ piped into xargs and used as an argument to whatever networking tool you want.
     3 packets transmitted, 3 received, 0% packet loss, time 2001ms
 
 
-<a id="org56a99f7"></a>
+<a id="orgdeebc8a"></a>
 
 ## TODO ipv4toutf8 (binary package)
 
