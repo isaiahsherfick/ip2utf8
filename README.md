@@ -1,15 +1,3 @@
-
-# Table of Contents
-
-1.  [ip2utf8](#orge74a267)
-    1.  [ip2utf8 (library)](#org71cb5c1)
-    2.  [utf8toipv4 (binary package)](#org5125318)
-    3.  [ipv4toutf8 (binary package)](#orgdeebc8a)
-
-
-
-<a id="orge74a267"></a>
-
 # ip2utf8
 
 ip addresses as UTF-8 encoded strings and vice versa
