@@ -1,4 +1,3 @@
-#![feature(concat_bytes)]
 use std::{io::{self,Write},u32,fmt::{Display,Formatter}};
 
 pub trait ToCodePoint {
