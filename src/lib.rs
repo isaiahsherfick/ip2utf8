@@ -1,4 +1,8 @@
-use std::{io::{self,Write},u32,fmt::{Display,Formatter}};
+use std::{
+    fmt::{Display, Formatter},
+    io::{self, Write},
+    u32,
+};
 
 pub trait ToCodePoint {
     fn to_code_point(&self) -> u32;
@@ -21,7 +25,7 @@ impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
         match self {
             Error::InvalidIpv4Address(s) => {
-                write!(f, "{} is not a valid ipv4 address.",s)?;
+                write!(f, "{} is not a valid ipv4 address.", s)?;
                 Ok(())
             }
         }
@@ -52,7 +56,7 @@ pub fn utf8_to_ipv4(input: &str) -> String {
 pub fn is_valid_ipv4_address(addr: &str) -> bool {
     let split: Vec<&str> = addr.split(".").collect();
     if split.len() != 4 {
-        writeln!(io::stdout(), "addr is not valid: {}",addr).unwrap();
+        writeln!(io::stdout(), "addr is not valid: {}", addr).unwrap();
         return false;
     }
     for octet in split {
@@ -104,7 +108,6 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
 // -- case 10: a and b are each 1 point graphemes, cd is the first two bytes of
 // the code point of a 3 byte grapheme.
 
-
 //WIP
 pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     if !is_valid_ipv4_address(ipv4_addr) {
@@ -113,7 +116,6 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     let octets: Vec<&str> = ipv4_addr.split(".").collect();
     let mut solution = String::new();
 
-
     //case 1
     let mut case_1_raw = String::new();
     let mut case_1_escaped = String::new();
@@ -121,10 +123,10 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
         let octet = octets[i];
         let val = octet.parse::<u32>().unwrap();
         let c = char::from_u32(val).unwrap();
-        case_1_raw += &format!("{}",c);
-        case_1_escaped += &format!("{}",c.escape_default());
+        case_1_raw += &format!("{}", c);
+        case_1_escaped += &format!("{}", c.escape_default());
     }
-    solution+= &format!("{case_1_escaped}\n\n{case_1_raw}");
+    solution += &format!("{case_1_escaped}\n\n{case_1_raw}");
 
     //case 2
     let one_byte_code_point = octets[0].parse::<u32>().unwrap();
@@ -132,33 +134,35 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     let octet1 = octets[1].parse::<u8>().unwrap();
     let octet2 = octets[2].parse::<u8>().unwrap();
     let octet3 = octets[3].parse::<u8>().unwrap();
-    let bytes: [u8; 4] = [octet1,octet2,octet3, 0x00];
+    let bytes: [u8; 4] = [octet1, octet2, octet3, 0x00];
     let code_point = u32::from_le_bytes(bytes);
     if let Some(three_byte_grapheme) = char::from_u32(code_point) {
-        solution += &format!("\n\n{}{}",grapheme,three_byte_grapheme);
+        solution += &format!("\n\n{}{}", grapheme, three_byte_grapheme);
     }
 
     //case 3
     let one_byte_code_point = octets[3].parse::<u32>().unwrap();
     let grapheme = char::from_u32(one_byte_code_point).unwrap();
     let octet0 = octets[0].parse::<u8>().unwrap();
-    let bytes: [u8; 4] = [octet0,octet1,octet2, 0x00];
+    let bytes: [u8; 4] = [octet0, octet1, octet2, 0x00];
     let code_point = u32::from_le_bytes(bytes);
     if let Some(three_byte_grapheme) = char::from_u32(code_point) {
-        solution += &format!("\n\n{}{}",three_byte_grapheme,grapheme);
+        solution += &format!("\n\n{}{}", three_byte_grapheme, grapheme);
     }
 
     //case 7
-    let first_two_byte_code_point_bytes: [u8; 4] = [octet0,octet1,0x00,0x00];
-    let last_two_byte_code_point_bytes: [u8; 4] = [octet2,octet3,0x00,0x00];
+    let first_two_byte_code_point_bytes: [u8; 4] = [octet0, octet1, 0x00, 0x00];
+    let last_two_byte_code_point_bytes: [u8; 4] = [octet2, octet3, 0x00, 0x00];
     let first_two_byte_code_point = u32::from_le_bytes(first_two_byte_code_point_bytes);
     let last_two_byte_code_point = u32::from_le_bytes(last_two_byte_code_point_bytes);
     if let Some(first_two_byte_grapheme) = char::from_u32(first_two_byte_code_point) {
         if let Some(second_two_byte_grapheme) = char::from_u32(last_two_byte_code_point) {
-            solution += &format!("\n\n{}{}",first_two_byte_grapheme,second_two_byte_grapheme);
+            solution += &format!(
+                "\n\n{}{}",
+                first_two_byte_grapheme, second_two_byte_grapheme
+            );
         }
     }
-
 
     Ok(solution)
 }
