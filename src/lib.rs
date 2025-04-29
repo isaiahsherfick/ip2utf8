@@ -1,3 +1,4 @@
+#![feature(concat_bytes)]
 use std::{io::{self,Write},u32,fmt::{Display,Formatter}};
 
 pub trait ToCodePoint {
@@ -81,25 +82,25 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
 // -- case 3: abc is the code point of a 3 byte grapheme, d is the code point of
 // a 1 byte UTF-8 grapheme
 //
-// -- case 3: abc is the code point of a 3 byte grapheme, d is the first byte of
+// -- case 4: abc is the code point of a 3 byte grapheme, d is the first byte of
 // the code point of a 2 byte UTF-8 grapheme
 //
-// -- case 4: abc is the code point of a 3 byte grapheme, d is the first byte of
+// -- case 5: abc is the code point of a 3 byte grapheme, d is the first byte of
 // the code point of a 3 byte UTF-8 grapheme
 //
-// -- case 5: ab is the code point of a 2 byte grapheme, c and d are each a 1
+// -- case 6: ab is the code point of a 2 byte grapheme, c and d are each a 1
 // byte grapheme.
 //
-// -- case 6: ab is the code point of a 2 byte grapheme, cd is the code point of
+// -- case 7: ab is the code point of a 2 byte grapheme, cd is the code point of
 // a 2 byte grapheme.
 //
-// -- case 7: ab is the code point of a 2 byte grapheme, cd is the first two
+// -- case 8: ab is the code point of a 2 byte grapheme, cd is the first two
 // bytes of the code point of a 3 byte grapheme.
 //
-// -- case 8: a and b are each 1 point graphemes, cd is the code point of a 2
+// -- case 9: a and b are each 1 point graphemes, cd is the code point of a 2
 // byte grapheme.
 //
-// -- case 9: a and b are each 1 point graphemes, cd is the first two bytes of
+// -- case 10: a and b are each 1 point graphemes, cd is the first two bytes of
 // the code point of a 3 byte grapheme.
 
 
@@ -110,12 +111,37 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     }
     let octets: Vec<&str> = ipv4_addr.split(".").collect();
     let mut solution = String::new();
-    for octet in octets {
+
+    //case 1
+    for i in 0..octets.len() {
+        let octet = octets[i];
         let val = octet.parse::<u32>().unwrap();
         let c = char::from_u32(val).unwrap();
-        println!("octet={val}, to char={c}");
-        solution += &format!("{}",c);
+        solution += &format!("{}",c.escape_default());
     }
+
+    //case 2
+    let one_byte_code_point = octets[0].parse::<u32>().unwrap();
+    let grapheme = char::from_u32(one_byte_code_point).unwrap();
+    let octet1 = octets[1].parse::<u8>().unwrap();
+    let octet2 = octets[2].parse::<u8>().unwrap();
+    let octet3 = octets[3].parse::<u8>().unwrap();
+    let bytes: [u8; 4] = [octet1,octet2,octet3, 0x00];
+    let code_point = u32::from_le_bytes(bytes);
+    if let Some(three_byte_grapheme) = char::from_u32(code_point) {
+        solution += &format!("\n\n{}{}",grapheme,three_byte_grapheme);
+    }
+
+    //case 3
+    let one_byte_code_point = octets[3].parse::<u32>().unwrap();
+    let grapheme = char::from_u32(one_byte_code_point).unwrap();
+    let octet0 = octets[0].parse::<u8>().unwrap();
+    let bytes: [u8; 4] = [octet0,octet1,octet2, 0x00];
+    let code_point = u32::from_le_bytes(bytes);
+    if let Some(three_byte_grapheme) = char::from_u32(code_point) {
+        solution += &format!("\n\n{}{}",three_byte_grapheme,grapheme);
+    }
+
     Ok(solution)
 }
 

@@ -12,7 +12,7 @@ fn main() {
 
     match ipv4_to_utf8(&input) {
         Ok(r) => {
-            let _ = writeln!(io::stdout(),"{}",r).unwrap()
+            let _ = writeln!(io::stdout(),"{}",r).unwrap();
         }
         Err(r) => {
             let _ = writeln!(io::stdout(),"{}",r).unwrap();
