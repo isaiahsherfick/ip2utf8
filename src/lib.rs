@@ -81,9 +81,11 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
 // -- case 3: abc is the code point of a 3 byte grapheme, d is the code point of
 // a 1 byte UTF-8 grapheme
 //
+///////////////SKIP THIS ONE
 // -- case 4: abc is the code point of a 3 byte grapheme, d is the first byte of
 // the code point of a 2 byte UTF-8 grapheme
 //
+///////////////SKIP THIS ONE
 // -- case 5: abc is the code point of a 3 byte grapheme, d is the first byte of
 // the code point of a 3 byte UTF-8 grapheme
 //
@@ -111,13 +113,18 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     let octets: Vec<&str> = ipv4_addr.split(".").collect();
     let mut solution = String::new();
 
+
     //case 1
+    let mut case_1_raw = String::new();
+    let mut case_1_escaped = String::new();
     for i in 0..octets.len() {
         let octet = octets[i];
         let val = octet.parse::<u32>().unwrap();
         let c = char::from_u32(val).unwrap();
-        solution += &format!("{}",c.escape_default());
+        case_1_raw += &format!("{}",c);
+        case_1_escaped += &format!("{}",c.escape_default());
     }
+    solution+= &format!("{case_1_escaped}\n\n{case_1_raw}");
 
     //case 2
     let one_byte_code_point = octets[0].parse::<u32>().unwrap();
@@ -140,6 +147,18 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     if let Some(three_byte_grapheme) = char::from_u32(code_point) {
         solution += &format!("\n\n{}{}",three_byte_grapheme,grapheme);
     }
+
+    //case 7
+    let first_two_byte_code_point_bytes: [u8; 4] = [octet0,octet1,0x00,0x00];
+    let last_two_byte_code_point_bytes: [u8; 4] = [octet2,octet3,0x00,0x00];
+    let first_two_byte_code_point = u32::from_le_bytes(first_two_byte_code_point_bytes);
+    let last_two_byte_code_point = u32::from_le_bytes(last_two_byte_code_point_bytes);
+    if let Some(first_two_byte_grapheme) = char::from_u32(first_two_byte_code_point) {
+        if let Some(second_two_byte_grapheme) = char::from_u32(last_two_byte_code_point) {
+            solution += &format!("\n\n{}{}",first_two_byte_grapheme,second_two_byte_grapheme);
+        }
+    }
+
 
     Ok(solution)
 }
