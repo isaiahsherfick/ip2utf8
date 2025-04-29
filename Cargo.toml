@@ -13,4 +13,4 @@ path = "src/utf8_to_ipv4.rs"
 
 [[bin]]
 name = "ipv4toutf8"
-path = "src/ip_to_utf8.rs"
+path = "src/ipv4_to_utf8.rs"

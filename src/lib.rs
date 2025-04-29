@@ -16,6 +16,7 @@ impl ToCodePoint for char {
     }
 }
 
+
 #[derive(Debug)]
 pub enum Error {
     InvalidIpv4Address(String),
@@ -70,7 +71,31 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
     true
 }
 
-// TODO figure out how to get this to print ALL possible UTF-8 strings s such that
+pub trait ToPrintableString {
+    fn to_printable_string(&self) -> String;
+}
+
+// This will be used for utf8_to_ipv4
+impl ToPrintableString for char {
+    fn to_printable_string(&self) -> String {
+        let code_point = self.to_code_point();
+        if code_point < 256 {
+            match self.is_ascii_alphanumeric() {
+                true => {
+                    format!("{}",self)
+                }
+                false => {
+                    format!("{}", self.escape_default())
+                }
+            }
+        }
+        else {
+            format!("{}",self)
+        }
+    }
+}
+
+// TODO figure out how to get this to print all possible UTF-8 strings s such that
 // utf8_to_ipv4(s) == ipv4_addr
 // ---------------------------
 // cases I've thought of so far:
@@ -109,61 +134,74 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
 /////////////SKIP THIS ONE
 // -- case 10: a and b are each 1 point graphemes, cd is the first two bytes of
 // the code point of a 3 byte grapheme.
-
-//WIP
-pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
+pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<Vec<String>, Error> {
     if !is_valid_ipv4_address(ipv4_addr) {
         return Err(Error::InvalidIpv4Address(ipv4_addr.into()));
     }
     let octets: Vec<&str> = ipv4_addr.split(".").collect();
-    let mut solution = String::new();
+    let mut solution: Vec<String> = vec![];
 
     //case 1
-    let mut case_1_raw = String::new();
-    let mut case_1_escaped = String::new();
+    let mut case_1_string = String::new();
     for i in 0..octets.len() {
         let octet = octets[i];
         let val = octet.parse::<u32>().unwrap();
         let c = char::from_u32(val).unwrap();
-        case_1_raw += &format!("{}", c);
-        case_1_escaped += &format!("{}", c.escape_default());
+        case_1_string += &format!("{}",c.to_printable_string());
     }
-    solution += &format!("{case_1_escaped}\n\n{case_1_raw}");
+    solution.push(format!("{}",case_1_string));
 
     //case 2
     let one_byte_code_point = octets[0].parse::<u32>().unwrap();
     let grapheme = char::from_u32(one_byte_code_point).unwrap();
+    let grapheme = grapheme.to_printable_string();
     let octet1 = octets[1].parse::<u8>().unwrap();
     let octet2 = octets[2].parse::<u8>().unwrap();
     let octet3 = octets[3].parse::<u8>().unwrap();
     let bytes: [u8; 4] = [octet1, octet2, octet3, 0x00];
     let code_point = u32::from_le_bytes(bytes);
     if let Some(three_byte_grapheme) = char::from_u32(code_point) {
-        solution += &format!("\n\n{}{}", grapheme, three_byte_grapheme);
+        solution.push(format!("{}{}", grapheme, three_byte_grapheme));
     }
 
     //case 3
     let one_byte_code_point = octets[3].parse::<u32>().unwrap();
     let grapheme = char::from_u32(one_byte_code_point).unwrap();
+    let grapheme = grapheme.to_printable_string();
     let octet0 = octets[0].parse::<u8>().unwrap();
     let bytes: [u8; 4] = [octet0, octet1, octet2, 0x00];
     let code_point = u32::from_le_bytes(bytes);
     if let Some(three_byte_grapheme) = char::from_u32(code_point) {
-        solution += &format!("\n\n{}{}", three_byte_grapheme, grapheme);
+        solution.push(format!("{}{}", three_byte_grapheme, grapheme));
+    }
+
+    //case 6
+    let ab_bytes: [u8; 4] = [octet0, octet1, 0x00, 0x00];
+    let octet2char = char::from_u32(octet2.into()).unwrap();
+    let octet2char = octet2char.to_printable_string();
+    let octet3char = char::from_u32(octet3.into()).unwrap();
+    let octet3char = octet3char.to_printable_string();
+    let ab = u32::from_le_bytes(ab_bytes);
+    if let Some(two_byte_grapheme) = char::from_u32(ab) {
+        solution.push(format!("{}{}{}", two_byte_grapheme, octet2char, octet3char));
     }
 
     //case 7
-    let ab_bytes: [u8; 4] = [octet0, octet1, 0x00, 0x00];
     let cd_bytes: [u8; 4] = [octet2, octet3, 0x00, 0x00];
-    let ab = u32::from_le_bytes(ab_bytes);
     let cd = u32::from_le_bytes(cd_bytes);
     if let Some(ab_grapheme) = char::from_u32(ab) {
         if let Some(cd_grapheme) = char::from_u32(cd) {
-            solution += &format!(
-                "\n\n{}{}",
-                ab_grapheme, cd_grapheme
-            );
+            solution.push(format!("{}{}", ab_grapheme, cd_grapheme));
         }
+    }
+
+    //case 9
+    let octet0char = char::from_u32(octet0.into()).unwrap();
+    let octet0char = octet0char.to_printable_string();
+    let octet1char = char::from_u32(octet1.into()).unwrap();
+    let octet1char = octet1char.to_printable_string();
+    if let Some(cd_grapheme) = char::from_u32(cd) {
+        solution.push(format!("{}{}{}",octet0char,octet1char,cd_grapheme));
     }
 
     Ok(solution)
