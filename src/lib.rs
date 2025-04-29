@@ -62,10 +62,10 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
     }
     for octet in split {
         match octet.parse::<u8>() {
-            Ok(v) => v,
             Err(_) => {
                 return false;
             }
+            _ => {}
         };
     }
     true
