@@ -99,12 +99,14 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
 // -- case 7: ab is the code point of a 2 byte grapheme, cd is the code point of
 // a 2 byte grapheme.
 //
+//////////////SKIP THIS ONE
 // -- case 8: ab is the code point of a 2 byte grapheme, cd is the first two
 // bytes of the code point of a 3 byte grapheme.
 //
 // -- case 9: a and b are each 1 point graphemes, cd is the code point of a 2
 // byte grapheme.
 //
+/////////////SKIP THIS ONE
 // -- case 10: a and b are each 1 point graphemes, cd is the first two bytes of
 // the code point of a 3 byte grapheme.
 
@@ -151,15 +153,15 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<String, Error> {
     }
 
     //case 7
-    let first_two_byte_code_point_bytes: [u8; 4] = [octet0, octet1, 0x00, 0x00];
-    let last_two_byte_code_point_bytes: [u8; 4] = [octet2, octet3, 0x00, 0x00];
-    let first_two_byte_code_point = u32::from_le_bytes(first_two_byte_code_point_bytes);
-    let last_two_byte_code_point = u32::from_le_bytes(last_two_byte_code_point_bytes);
-    if let Some(first_two_byte_grapheme) = char::from_u32(first_two_byte_code_point) {
-        if let Some(second_two_byte_grapheme) = char::from_u32(last_two_byte_code_point) {
+    let ab_bytes: [u8; 4] = [octet0, octet1, 0x00, 0x00];
+    let cd_bytes: [u8; 4] = [octet2, octet3, 0x00, 0x00];
+    let ab = u32::from_le_bytes(ab_bytes);
+    let cd = u32::from_le_bytes(cd_bytes);
+    if let Some(ab_grapheme) = char::from_u32(ab) {
+        if let Some(cd_grapheme) = char::from_u32(cd) {
             solution += &format!(
                 "\n\n{}{}",
-                first_two_byte_grapheme, second_two_byte_grapheme
+                ab_grapheme, cd_grapheme
             );
         }
     }
