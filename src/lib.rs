@@ -16,7 +16,6 @@ impl ToCodePoint for char {
     }
 }
 
-
 #[derive(Debug)]
 pub enum Error {
     InvalidIpv4Address(String),
@@ -82,15 +81,14 @@ impl ToPrintableString for char {
         if code_point < 256 {
             match self.is_ascii_alphanumeric() {
                 true => {
-                    format!("{}",self)
+                    format!("{}", self)
                 }
                 false => {
                     format!("{}", self.escape_default())
                 }
             }
-        }
-        else {
-            format!("{}",self)
+        } else {
+            format!("{}", self)
         }
     }
 }
@@ -147,9 +145,9 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<Vec<String>, Error> {
         let octet = octets[i];
         let val = octet.parse::<u32>().unwrap();
         let c = char::from_u32(val).unwrap();
-        case_1_string += &format!("{}",c.to_printable_string());
+        case_1_string += &format!("{}", c.to_printable_string());
     }
-    solution.push(format!("{}",case_1_string));
+    solution.push(format!("{}", case_1_string));
 
     //case 2
     let one_byte_code_point = octets[0].parse::<u32>().unwrap();
@@ -201,7 +199,7 @@ pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<Vec<String>, Error> {
     let octet1char = char::from_u32(octet1.into()).unwrap();
     let octet1char = octet1char.to_printable_string();
     if let Some(cd_grapheme) = char::from_u32(cd) {
-        solution.push(format!("{}{}{}",octet0char,octet1char,cd_grapheme));
+        solution.push(format!("{}{}{}", octet0char, octet1char, cd_grapheme));
     }
 
     Ok(solution)
