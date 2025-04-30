@@ -1,7 +1,10 @@
 [package]
 name = "utf8toipv4"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
+license-file = "LICENSE"
+description = "Convert UTF-8 to ipv4 addresses and vice versa"
+repository = "https://github.com/isaiahsherfick/utf8toipv4"
 
 [lib]
 name = "utf8toipv4"
