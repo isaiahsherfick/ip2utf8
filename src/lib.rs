@@ -5,7 +5,7 @@ use std::{
 };
 
 /// An interface to convert a given type to code_point
-pub trait ToCodePoint {
+trait ToCodePoint {
     fn to_code_point(&self) -> u32;
 }
 
@@ -75,7 +75,7 @@ pub fn is_valid_ipv4_address(addr: &str) -> bool {
     true
 }
 
-pub trait ToPrintableString {
+trait ToPrintableString {
     fn to_printable_string(&self) -> String;
 }
 
