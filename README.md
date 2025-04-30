@@ -1,15 +1,3 @@
-
-# Table of Contents
-
-1.  [utf8toipv4](#org3858629)
-    1.  [utf8toipv4 (library)](#org391e953)
-    2.  [utf8toipv4 (binary package)](#org8ed21cd)
-    3.  [ipv4toutf8 (binary package)](#org046fc0c)
-
-
-
-<a id="org3858629"></a>
-
 # utf8toipv4
 
 UTF-8 strings as ip addresses and vice versa
