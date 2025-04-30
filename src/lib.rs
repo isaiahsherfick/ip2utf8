@@ -4,11 +4,13 @@ use std::{
     u32,
 };
 
+/// An interface to convert a given type to code_point
 pub trait ToCodePoint {
     fn to_code_point(&self) -> u32;
 }
 
 impl ToCodePoint for char {
+    /// Returns a character's unicode codepoint in base10
     fn to_code_point(&self) -> u32 {
         let escaped = self.escape_unicode().to_string();
         let code_point = escaped.replace(&['\\', '{', '}', 'u'], "");
@@ -34,6 +36,8 @@ impl Display for Error {
 
 impl std::error::Error for Error {}
 
+/// converts each character's codepoint into base2 (little-endian) and uses all non-zero bytes to return ipv4 address as string
+/// special case: if the input string has less than 4 non-zero bytes, the ending will be ended with complementary zeros
 pub fn utf8_to_ipv4(input: &str) -> String {
     let mut non_zero_bytes: Vec<u8> = vec![];
     for c in input.chars() {
@@ -53,6 +57,7 @@ pub fn utf8_to_ipv4(input: &str) -> String {
     );
 }
 
+/// determines addr's validity as ipv4 (4 unsigned integers with .s dividing them)
 pub fn is_valid_ipv4_address(addr: &str) -> bool {
     let split: Vec<&str> = addr.split(".").collect();
     if split.len() != 4 {
@@ -76,6 +81,7 @@ pub trait ToPrintableString {
 
 // This will be used for utf8_to_ipv4
 impl ToPrintableString for char {
+    /// prints the default escape value for a character given it is not ASCII-alphanumeric
     fn to_printable_string(&self) -> String {
         let code_point = self.to_code_point();
         if code_point < 256 {
@@ -97,9 +103,7 @@ impl ToPrintableString for char {
 // utf8_to_ipv4(s) == ipv4_addr
 // ---------------------------
 // cases I've thought of so far:
-//              -------------------------------
-//              | ipv4_addr = {a}.{b}.{c}.{d} |
-//              -------------------------------
+
 // -- case 1: each octet is its own 1-byte UTF-8 grapheme
 //
 // -- case 2: a is its own 1-byte UTF-8 grapheme, bcd is the code point of a 3
@@ -132,6 +136,13 @@ impl ToPrintableString for char {
 /////////////SKIP THIS ONE
 // -- case 10: a and b are each 1 point graphemes, cd is the first two bytes of
 // the code point of a 3 byte grapheme.
+
+
+/// returns a vector of strings v such that utf8_to_ipv4[s] for each s in v would yield ipv4_addr
+/// Note: this is not exhaustive
+///              -------------------------------
+///              | ipv4_addr = {a}.{b}.{c}.{d} |
+///              -------------------------------
 pub fn ipv4_to_utf8(ipv4_addr: &str) -> Result<Vec<String>, Error> {
     if !is_valid_ipv4_address(ipv4_addr) {
         return Err(Error::InvalidIpv4Address(ipv4_addr.into()));
